@@ -1,4 +1,7 @@
-﻿using Business.Abstract;
+﻿using Azure.Messaging;
+using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -18,9 +21,34 @@ namespace Business.Concrete
             _brandDal = brandDal;
         }
 
-        public List<Brand> GetAll()
+        public IDataResult<List<Brand>> GetAll()
         {
-            return _brandDal.GetAll();
+            return  new SuccessDataResult<List<Brand>>(_brandDal.GetAll(),Messages.ProductsListed);
         }
+
+        public IDataResult<Brand> GetById(int brandId)
+        {
+            return new SuccessDataResult<Brand>(_brandDal.Gett(b=>b.BrandId==brandId));
+        }
+
+        public IResult AddBrand(Brand brand)
+        {
+            _brandDal.Add(brand);
+            return new Result(true, Messages.CarAdded);
+        }
+
+        public IResult DeleteBrand(Brand brand)
+        {
+            _brandDal.Delete(brand);
+            return new Result(true,Messages.CarDeleted);
+        }
+
+        public IResult UpdateBrand(Brand brand)
+        {
+            _brandDal.Update(brand);
+            return new Result(true,Messages.carUpdated);
+        }
+
+        
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -19,63 +21,54 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        public void AddCar()
+        public IResult AddCar(Car car)
         {
-            Car car = new Car();
-            Console.Write("Enter the car name: ");
-            car.Description = Console.ReadLine();
-            Console.Write("Enter the car daily price: ");
-            car.DailyPrice=Convert.ToDecimal(Console.ReadLine());
-            Console.Write("Enter the car ıd: ");
-            car.CarId = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Enter the brand ıd: ");
-            car.BrandId= Convert.ToInt32(Console.ReadLine());
-            Console.Write("Enter the color ıd: ");
-            car.ColorId= Convert.ToInt32(Console.ReadLine());
-            Console.Write("Enter the mdoel year : ");
-            car.ModelYear = Console.ReadLine();
-
-            if (car.Description.Length > 2 && car.DailyPrice>0)
+            if (car.Description.Length < 2)
             {
-                _carDal.Add(car);
-                Console.WriteLine("Car added with "+car.Description+" name");
-            }    
+                return new ErrorResult(Messages.CarNameInvalid);
+            }
+            _carDal.Add(car);
+            return new SuccessResult(Messages.CarAdded);
+        }
+
+       
+
+       
+
+        public IResult Delete(Car car)
+        {
+            _carDal.Delete(car);
+            return new Result(true,Messages.CarDeleted);
+        }
+
+        public IDataResult<List<Car>> GetAll()
+        {
+            if (DateTime.Now.Hour == 18)
+            {
+                return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
+            }
             else
             {
-                Console.WriteLine("Car name cannot be less than two characters and it' price cannot be zero"); ;
+                return new SuccessDataResult<List<Car>>(Messages.ProductsListed);
             }
-        
         }
 
-       
-
-       
-
-        public void Delete(int carId)
+        public IDataResult<List<Car>> GetCarsByBrandId(int brandId)
         {
-            throw new NotImplementedException();
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(c=>c.BrandId==brandId));
         }
 
-        public List<Car> GetAll()
+        public IDataResult<List<Car>> GetCarsByColorId(int colorId)
         {
-            return _carDal.GetAll();
-        }
-
-        public List<Car> GetCarsByBrandId(int brandId)
-        {
-            return _carDal.GetAll(p=>p.BrandId == brandId);
-        }
-
-        public List<Car> GetCarsByColorId(int colorId)
-        {
-            return _carDal.GetAll(p => p.ColorId == colorId);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == colorId));
         }
 
       
 
-        public void Update(int carId)
+        public IResult Update(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Update(car);
+            return new Result(true,Messages.carUpdated);
         }
     }
 }
