@@ -14,6 +14,17 @@ namespace Business.Concrete
 {
     public class CarManager : ICarService
     {
+        public string getSring(string message)
+        {
+            Console.Write(message);
+            return Console.ReadLine();
+        }
+
+        public int getInt(string message) 
+        {
+            Console.Write(message);
+            return Convert.ToInt32(Console.ReadLine()); 
+        }
         ICarDal _carDal;
 
         public CarManager(ICarDal carDal)
@@ -23,7 +34,8 @@ namespace Business.Concrete
 
         public IResult AddCar(Car car)
         {
-            if (car.Description.Length < 2)
+           
+            if (car.Description.Length < 10)
             {
                 return new ErrorResult(Messages.CarNameInvalid);
             }

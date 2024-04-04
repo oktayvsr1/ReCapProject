@@ -7,9 +7,9 @@ namespace ConsoleeUI
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new EfCarDal());
+            //CarManager carManager = new CarManager(new EfCarDal());
             //carManager.AddCar();
-            carManager.GetAll();
+            //carManager.GetAll();
         }
     }
 }
